@@ -80,8 +80,6 @@ Complexitatea spațiu este de $O(b^m)$ în cel mai rău caz, deoarece algoritmul
 
 Acest algoritm reprezintă o abordare de căutare informată și este considerat unul dintre cei mai eficienți algoritmi de pathfinding. Diferă de Greedy Best-First Search prin faptul că ia în calcul atât costul real acumulat de la nodul de start, cât și estimarea până la destinație.
 
-
-
 La fiecare pas, algoritmul selectează pentru expandare nodul $n$ care minimizează funcția de evaluare totală:
 $f(n) = g(n) + h(n)$
 
@@ -121,3 +119,66 @@ def a_star(graph, start, goal, heuristics):
 Complexitatea timp este $O(b^d)$, iar în cazul în care euristica este perfectă, complexitatea scade la $O(b*d)$. 
 
 Complexitatea spațiu este tot $O(b^d)$.
+
+## IDA*
+
+Acest algoritm (Iterative Deepening A*) reprezintă o variantă optimizată din punct de vedere al memoriei a algoritmului A*. Combină ideea de euristică din A* cu strategia de explorare în adâncime iterativă (Iterative Deepening Depth-First Search).
+
+La fel ca A*, folosește funcția de evaluare:
+
+$f(n) = g(n) + h(n)$
+
+Diferența majoră constă în faptul că IDA* nu păstrează toate nodurile în memorie. În schimb, efectuează căutări DFS limitate de un threshold aplicat asupra valorii $f(n)$.
+
+Se pornește cu un prag inițial:
+$threshold = h(start)$
+
+Se face un DFS, dar sunt expandate doar nodurile pentru care $f(n) \leq threshold$.
+
+Dacă soluția nu este găsită pragul este actualizat la cel mai mic $f(n)$ care a depășit limita si algoritmul se reia.
+
+### Implementare în Python:
+
+```python
+def ida_star(graph, start, goal, heuristics):
+
+    def search(path, g, threshold):
+        current_node = path[-1]
+        f = g + heuristics[current_node]
+
+        if f > threshold:
+            return f
+
+        if current_node == goal:
+            return path
+
+        min_threshold = float('inf')
+
+        for neighbor, cost in graph.get(current_node, {}).items():
+            if neighbor not in path:  # evitam cicluri
+                result = search(path + [neighbor], g + cost, threshold)
+
+                if isinstance(result, list):
+                    return result
+
+                min_threshold = min(min_threshold, result)
+
+        return min_threshold
+
+    threshold = heuristics[start]
+
+    while True:
+        result = search([start], 0, threshold)
+
+        if isinstance(result, list):
+            return result
+
+        if result == float('inf'):
+            return None
+
+        threshold = result
+```
+
+Complexitatea timp este $O(b^d)$, însă în practică este mai mare decât în cazul A*, deoarece nodurile pot fi expandate de mai multe ori.
+
+Complexitatea spațiu este $O(d)$, deoarece algoritmul folosește doar stiva recursivă specifică DFS.
