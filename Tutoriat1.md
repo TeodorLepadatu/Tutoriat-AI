@@ -2,7 +2,8 @@
 
 Domeniul inteligenței artificiale este împărțit în mai multe subdomenii fundamentale, printre care:
 
-- **Reprezentarea cunoștințelor (KR - Knowledge Representation)**
+- **Reprezentarea cunoștințelor (KR - Knowledge Representation)** (master)
+- **Rezolvarea Problemelor și căutare (PS - Problem Solving & Search)**
 - **Învățare automată (ML - Machine Learning)**
 
 La rândul său, ML-ul este împărțit în trei paradigme principale:
