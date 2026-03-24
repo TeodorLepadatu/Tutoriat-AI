@@ -8,7 +8,7 @@ Example of games in which this algorithm can be applied:
 - Tic-Tac-Toe
 - Connect 4
 
-The algorithm involves two players: player *MAX* (who wants to win the game) and player *MIN* (who wants to prevent MAX to win the game by winning himself). For example, in chess, MAX is white and MIN is black.
+The algorithm involves two players: player *MAX* (who wants to win the game) and player *MIN* (who wants to prevent MAX to win the game by winning himself). The player *MAX* is always the first player that makes a move. For example, in chess, MAX is white and MIN is black.
 
 Each game state is evaluated using an evaluation function and is assigned a numerical value based on the game situation. For example, the evaluation bar on chess.com shows the value returned by the evaluation function on that specific position. If the value is greater than 0 (or the bar has more white than black), then white (MAX) has a better chance of winning. Similarly, if the value if less than 0, then black (MIN) has a better chance of winning. 
 
@@ -24,7 +24,7 @@ Each game state is evaluated using an evaluation function and is assigned a nume
 
 ![Initial Tree](min_max_tree.png)   -------------------->        ![Final Tree](min_max_tree2.png)
 
-*Step 4:* Choose the move.
+*Step 4:* Choose the move. In the tree above, it chooses the left branch, as it is MAX's move and 3 > 2.
 
 
 
