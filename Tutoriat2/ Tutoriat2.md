@@ -1,6 +1,6 @@
 # MiniMax algorithm
 
-Minimax is a backtracking algorithm used in decision making and game theory to find the optimal move for a player, assuming that the opponent also plays optimally. It is applied on 2-player games, in which each player has complete information (for example they can see the whole board).
+Minimax is a backtracking algorithm used in decision making and game theory to find the best move for a player, assuming that the opponent also plays optimally. It is applied on 2-player games, in which each player has complete information (for example they can see the whole board and the opponent has no hidden game parts, like hidden cards).
 
 Example of games in which this algorithm can be applied:
 
@@ -50,5 +50,82 @@ def minimax (curDepth, nodeIndex,
                      True, scores, targetDepth))
 ```
 
+The time complexity of this algorithm is $O(b^m)$, where *b* is the number of possible moves for a player at a certain state and *m* is the maximum depth of the tree.
 
+The space complexity of this algorithm is $O(b*m)$, where *b* and *m* have the same meaning as above.
 
+*Remark*: It is almost impossible to compute the entire tree for a complex game like chess, so we need to find a better implementation of the idea of this algorithm.
+
+# An efficient MiniMax implementation: Alpha-Beta pruning
+
+The MiniMax algorithm generates the entire state tree until the depth limit is reached or the game ends, whichever comes first, which takes a lot of time. 
+
+*Observation*: In the MiniMax algorithm, not all of the nodes of the tree are used to compute the best move at the current state of the game, so we want to stop looking at all of them to improve the complexity of the algorithm.
+
+**How the algorithm works:**
+
+To make MiniMax more efficient, Alpha-Beta Pruning cuts some of the tree's branches that will have no effect on the evaluation of the current state. It uses two extra parameters:
+
+- alpha ($\alpha$), which is the highest score (evaluation) that player *MAX* is guaranteed to get so far
+- beta ($\beta$), which is the lowest score (evaluation) that player *MIN* is guaranteed to get so far
+
+When $\alpha \ge \beta$, the branch is cut (or pruned).
+
+At the begining, the algorithm initializes $\alpha = -\infty$ and $\beta = \infty$ and performs a DFS (similar to MiniMax). Then, MAX nodes update $\alpha$ when he finds a child node which value is greater than $\alpha$ and MIN nodes update $\beta$ when he finds a child node which value is less than $\beta$. If a min node receives a $\beta$ value less than or equal to the $\alpha$ value of its ancestor, it stops evaluating its children (pruning).
+
+You can practice your understanding of this algorithm <a href = https://schaerli.org/info2/abTreePractice/>here</a>.
+
+**Python Implementation**
+
+```python
+import numpy as np
+
+class Node:
+    def __init__(self, move_name=None, value=None, children=None):
+        self.move_name = move_name
+        self.value = value
+        self.children = children if children is not None else []
+
+    def is_terminal(self):
+        return len(self.children) == 0
+
+    def evaluate(self):
+        return self.value
+
+def alpha_beta(node, depth, alpha, beta, is_MAX_turn):
+    # Returns a tuple: (best_move_node, evaluation_score)
+    if depth == 0 or node.is_terminal():
+        return None, node.evaluate()
+
+    best_move = None
+
+    if is_MAX_turn:
+        max_eval = -np.inf
+        for child in node.children:
+            _, eval_score = alpha_beta(child, depth - 1, alpha, beta, False)
+            
+            if eval_score > max_eval:
+                max_eval = eval_score
+                best_move = child
+                
+            alpha = max(alpha, eval_score)
+            if beta <= alpha:
+                break  # Beta cutoff
+        return best_move, max_eval
+
+    else:
+        min_eval = np.inf
+        for child in node.children:
+            _, eval_score = alpha_beta(child, depth - 1, alpha, beta, True)
+            
+            if eval_score < min_eval:
+                min_eval = eval_score
+                best_move = child
+                
+            beta = min(beta, eval_score)
+            if beta <= alpha:
+                break  # Alpha cutoff
+        return best_move, min_eval
+```
+
+The time complexity of this algorithm is in the best case $O(b^{\frac{m}{2}})$, so way better than MiniMax's complexity. If no subtrees are pruned, then the complexity is still $O(b*m)$ and the algorithm is completely identical to MiniMax. The space complexity is $O(d)$, so better than MiniMax's.
