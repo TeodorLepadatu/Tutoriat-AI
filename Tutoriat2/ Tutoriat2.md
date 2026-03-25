@@ -129,3 +129,60 @@ def alpha_beta(node, depth, alpha, beta, is_MAX_turn):
 ```
 
 The time complexity of this algorithm is in the best case $O(b^{\frac{m}{2}})$, so way better than MiniMax's complexity. If no subtrees are pruned, then the complexity is still $O(b*m)$ and the algorithm is completely identical to MiniMax. The space complexity is $O(d)$, so better than MiniMax's.
+
+
+# Expectiminimax Algorithm
+
+We have previously looked at algorithms where both players have complete information about the game state. Now, we are going to look at an algorithm which is used for games where there occur some random events besides the player moves (for example Backgammon).
+
+Unlike the MiniMax algorithm, Expectiminimax has 3 types of nodes:
+
+- MAX nodes: the agent selects the action that yields the highest value of the evaluation function (just like before)
+- MIN nodes: the agent selects the action that yields the lowest value of the evaluation function (just like before)
+- CHANCE nodes: represents a random event (like a dice roll). The value of it is calculated as the sum of the value of each child multiplied by its probability of occurring.
+
+Expectiminimax works in the same way as MiniMax, but it calculates the values using the three types of nodes stated above, instead of the two types from MiniMax.
+
+*Remark*: The algorithm that solves 1-player games that includes random events is the **Expectimax** algorithm. It works in the exact same way as Expectiminimax, but it treats the MIN nodes as MAX nodes instead.
+
+**Python implementation**:
+
+```python
+class NodeType:
+    MAX = 'MAX'
+    MIN = 'MIN'
+    CHANCE = 'CHANCE'
+    TERMINAL = 'TERMINAL'
+
+class Node:
+    def __init__(self, node_type, value=None, probability=1.0):
+        self.node_type = node_type
+        self.value = value
+        self.probability = probability
+        self.children = []
+
+    def add_child(self, child_node):
+        self.children.append(child_node)
+
+def expectiminimax(node, depth):
+    # Base case: Reached depth limit or a terminal node
+    if depth == 0 or node.node_type == NodeType.TERMINAL:
+        return node.value
+
+    if node.node_type == NodeType.MAX:
+        return max(expectiminimax(child, depth - 1) for child in node.children)
+
+    elif node.node_type == NodeType.MIN:
+        return min(expectiminimax(child, depth - 1) for child in node.children)
+
+    elif node.node_type == NodeType.CHANCE:
+        expected_value = 0.0
+        for child in node.children:
+            expected_value += child.probability * expectiminimax(child, depth - 1)
+        return expected_value
+```
+The time complexity is $O(b^m)$ and the space complexity is $O(b*m)$, the same as MiniMax.
+
+**Example**:
+
+![Expectiminimax example](expectiminimax.png)
