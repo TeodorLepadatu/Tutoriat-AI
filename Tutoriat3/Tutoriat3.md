@@ -58,3 +58,63 @@ END WHILE
 
 RETURN the individual with the highest fitness score from the final population P(t)
 ```
+
+# Example
+
+Given $n$ objects, each characterized by a value and a probability (subunitary value) of being transported intact. The goal is to select some objects from the $n$ available to maximize the total value of the shipment, while ensuring a probability of at least $P$ that the entire contents arrive intact at the destination. PS: For any 2 objects, the events of them arriving intact are independent.
+
+**Requirements:** In designing a genetic algorithm for this problem:
+
+---
+
+### a) Chromosome Encoding
+
+Describe what encoding you would use to obtain a chromosome.
+
+- What is the length of the chromosome?
+- What would the value of each gene represent?
+
+---
+
+### b) Fitness Function
+
+Describe how you would model a fitness function for this problem.
+
+---
+
+### c) Crossover
+For $n = 8$, $P = 1/8$ and the objects with their value and probability of arriving intact are:
+
+(4, 4/5), (6, 3/5), (3, 4/5), (7, 1/3), (2, 7/10), (10, 1/3), (5, 3/4), (3, 2/3)
+
+Generate 2 chromosomes at random (mentioning the value of each) and illustrate the **crossover** (recombination) operation on this pair.
+
+# Solution
+
+### a) Chromosome Encoding
+
+We can use chromosomes of length n, where gene i has value 1 if we take object i and 0 otherwise.
+
+### b) Fitness Function
+
+Let P(C) be the probability that all objects arrive intact in the solution encoded by chromosome C.
+Let S(C) be the sum of the values of the objects selected in the solution encoded by chromosome C.
+We can use the fitness function f(C) = S(C) if P(C) >= P, otherwise 0.
+
+### c) Crossover
+
+C1 = 01001100
+
+P(C1) = 3/5 * 7/10 * 1/3 = 63/450 = 0.14 >= 1/8
+
+S(C1) = 6 + 2 + 10 = 18
+
+f(C1) = 18
+
+C2 = 11011001
+
+P(C2) = 4/5 * 3/5 * 1/3 * 7/10 * 2/3 = 168/2250 = 0.074(6) < 1/8
+
+f(C2) = 0
+
+We cross the two chromosomes at position 4 and obtain C3 = 01001001
