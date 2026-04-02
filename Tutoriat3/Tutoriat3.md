@@ -6,7 +6,7 @@ Genetic algorithms are commonly used to generate high-quality solutions to optim
 
 ## The components of a genetic algorithm
 
-- **Gene**: the smallest unit of information (usually a bit)
+- **Gene**: the smallest unit of information (usually a bit, but can be a real number as well)
 
 - **Chromosome**: a candidate solution to the problem. It can also be defined as an oredered set of elements (or genes) whose values determine the characteristics of an individual.
   For example, it can be a sequence of bits: 1011100100
