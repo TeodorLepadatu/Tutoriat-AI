@@ -75,4 +75,9 @@ Depending on whether we are dealing with a binary classification (Task 1) or mul
 We do not know the labels for the test set, so we are going to split the training set into a train set and a validation set. Firstly, we will only train the model on the train set and evaluate it on the validation set using these metrics. Afterwards, to get the best possible performance on the test set, we will train on the unsplit (original) train set.
 
 #### Results 
-If you implement the bag of words + naive bayes solution, you will get about 75% for all metrics in the language classification and 66% accuracy, 46% precision, 49% recall and 47% f1 for the topic classification.
+If you implement the bag of words + naive bayes solution, you will get about 75% for all metrics in the language classification and 66% accuracy, 46% precision, 49% recall and 47% f1 for the topic classification. The implementation is in the *language_topic* folder.
+
+### Exercise for you
+
+We have given you an exercise to try to test yourselves on this type of tasks. In the *Exercise* folder you have a csv file with a dataset taken from Reddit. Your job is to classify these posts and figure out if the author is anxious or not. You should get more than 75% accuracy if you implement the same approach as in the problem presented here. You might get better results using TFIDF, but we have not tried this approach so no guarantees here.
+
