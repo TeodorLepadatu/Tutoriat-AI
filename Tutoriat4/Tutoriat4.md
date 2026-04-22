@@ -14,6 +14,7 @@ We have a dataset with sentences in Romanian and Moldovan. The words in the sent
 The model cannot learn anything from the raw words. Therefore, we need to do some preprocessing to turn the data from text into numbers, as the model will not be able to understand anything from the raw text. 
 
 **Remark 1:** As we know, Moldovan is a dialect of Romanian, so most words are similar, but some other words are very different.
+
 **Remark 2:** The topics required for task 2 are very different, so there would be very different words appearing in each sample.
 
 We are going to use a preprocessing algorithm called *Bag of words* (BoW). It works by converting the text into a collection of words and counts how often each word appears in the text. It ignores word order and grammar, focusing only on frequency. Because the words are shuffled, no context can be retrieved from the data. We can also use an algorithm called *TF-IDF* for this problem, but this algorithm will not appear in your exams (unlike *Bag of words* which has a high chance of appearing).
