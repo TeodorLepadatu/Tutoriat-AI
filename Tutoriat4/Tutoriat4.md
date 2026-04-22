@@ -1,4 +1,65 @@
-# Naive Bayes 
+# Naive Bayes
+
+**Naive Bayes** is a probabilistic classifier based on **Bayes' Theorem**. Despite its simplicity, it performs surprisingly well on many real-world tasks like spam filtering, sentiment analysis, and document classification.
+
+The core idea: *given some observed features, what is the most probable class?*
+
+---
+
+## The Math Behind It
+
+Bayes' Theorem gives us:
+
+$$P(C \mid X) = \frac{P(X \mid C) \cdot P(C)}{P(X)}$$
+
+| Term | Name | Meaning |
+|---|---|---|
+| $P(C \mid X)$ | **Posterior** | Probability of class $C$ given features $X$ |
+| $P(X \mid C)$ | **Likelihood** | Probability of seeing features $X$ in class $C$ |
+| $P(C)$ | **Prior** | Overall probability of class $C$ |
+| $P(X)$ | **Evidence** | Probability of features $X$ (same for all classes, so we ignore it) |
+
+Since $P(X)$ is constant across classes, we simplify to:
+
+$$P(C \mid X) \propto P(C) \cdot P(X \mid C)$$
+
+We pick the class with the **highest posterior**:
+
+$$\hat{C} = \underset{C}{\arg\max} \; P(C) \cdot P(X \mid C)$$
+
+---
+
+## The "Naive" Assumption
+
+The "naive" part: we assume all features are **conditionally independent** given the class. That means:
+
+$$P(X \mid C) = P(x_1 \mid C) \cdot P(x_2 \mid C) \cdots P(x_n \mid C) = \prod_{i=1}^{n} P(x_i \mid C)$$
+
+This is almost never true in reality, but it makes the math tractable and works well in practice.
+
+---
+
+## Variants of Naive Bayes
+
+| Variant | When to Use | How $P(x_i \mid C)$ is modeled |
+|---|---|---|
+| **Multinomial NB** | Text classification (word counts) | Multinomial distribution |
+| **Bernoulli NB** | Binary features (word present/absent) | Bernoulli distribution |
+| **Gaussian NB** | Continuous features | Gaussian (normal) distribution |
+| **Complement NB** | Imbalanced text datasets | Complement class statistics |
+
+## Summary
+
+```
+Training:
+  1. Compute P(C) for each class           ← prior
+  2. Compute P(word | C) for each word     ← likelihood (with smoothing)
+
+Prediction for new document X = {x₁, x₂, ..., xₙ}:
+  For each class C:
+    score(C) = log P(C) + Σ log P(xᵢ | C)
+  Return class with highest score
+```
 
 ## How do we use the Naive Bayes model?
 
