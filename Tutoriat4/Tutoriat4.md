@@ -80,6 +80,20 @@ The model cannot learn anything from the raw words. Therefore, we need to do som
 
 We are going to use a preprocessing algorithm called *Bag of words* (BoW). It works by converting the text into a collection of words and counts how often each word appears in the text. It ignores word order and grammar, focusing only on frequency. Because the words are shuffled, no context can be retrieved from the data. We can also use an algorithm called *TF-IDF* for this problem, but this algorithm will not appear in your exams (unlike *Bag of words* which has a high chance of appearing).
 
+While Bag of Words only counts frequencies, *TF-IDF* also evaluates how informative a word is across the entire dataset. The metric is composed of two parts:
+
+* **Term Frequency (TF):** Measures how frequently a term occurs in a specific document.
+  $$TF(t, d) = \frac{\text{Count of term } t \text{ in document } d}{\text{Total number of words in document } d}$$
+
+* **Inverse Document Frequency (IDF):** Measures how important a term is across the entire corpus. It penalizes highly frequent words (e.g., "the", "is") and scales up rare ones that might contain more domain-specific information.
+  $$IDF(t) = \log\left(\frac{N}{DF(t)}\right)$$
+  Where $N$ is the total number of documents and $DF(t)$ is the number of documents containing the term $t$.
+
+The final feature representation for a word is the product of these two metrics:
+
+$$TF\text{-}IDF(t, d) = TF(t, d) \cdot IDF(t)$$
+
+Now let's return to our task.
 After preprocessing using *Bag of words*, we give the numbers to the naive bayes model and we can generate the predictions.
 
 ### Evaluating the solution
@@ -137,7 +151,7 @@ Depending on whether we are dealing with a binary classification (Task 1) or mul
 We do not know the labels for the test set, so we are going to split the training set into a train set and a validation set. Firstly, we will only train the model on the train set and evaluate it on the validation set using these metrics. Afterwards, to get the best possible performance on the test set, we will train on the unsplit (original) train set.
 
 #### Results 
-If you implement the bag of words + naive bayes solution, you will get about 75% for all metrics in the language classification and 66% accuracy, 46% precision, 49% recall and 47% f1 for the topic classification. The implementation is in the *language_topic* folder.
+If you implement the bag of words + naive bayes solution, you will get about 75% for all metrics in the language classification and 66% accuracy, 46% precision, 49% recall and 47% f1 for the topic classification. The implementation is in the *language_topic* folder. If you implement TF-IDF + Naive Bayes, you will get better results overall.
 
 ### Exercise for you
 
