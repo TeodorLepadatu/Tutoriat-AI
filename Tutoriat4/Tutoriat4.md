@@ -98,7 +98,12 @@ After preprocessing using *Bag of words*, we give the numbers to the naive bayes
 
 ### Evaluating the solution
 
-After the model has outputted its predictions, we need to have a way of figuring out if the predictions were good or not. We use the following metrics to measure classification performance. In the formulas below, $TP$ stands for True Positives, $TN$ for True Negatives, $FP$ for False Positives, and $FN$ for False Negatives.
+After the model has outputted its predictions, we need to have a way of figuring out if the predictions were good or not. We use the following metrics to measure classification performance:
+
+* **True Positives ($TP$):** The model correctly predicted the positive class (e.g., predicting an email is spam, and it actually is spam).
+* **True Negatives ($TN$):** The model correctly predicted the negative class (e.g., predicting an email is not spam, and it actually is not).
+* **False Positives ($FP$):** The model incorrectly predicted the positive class (e.g., predicting an email is spam, but it is actually a regular email). 
+* **False Negatives ($FN$):** The model incorrectly predicted the negative class (e.g., predicting an email is not spam, but it actually is spam). 
 
 * **Accuracy:** The ratio of correctly predicted data points to the total number of data points. It provides a general overview of model performance but can be misleading if the dataset is highly imbalanced.
 
@@ -147,6 +152,29 @@ Depending on whether we are dealing with a binary classification (Task 1) or mul
 * **Confusion Matrix:** A table used to visualize the performance of a classification model. It displays the true positives, true negatives, false positives, and false negatives, allowing you to see exactly where the model is confusing specific classes with one another.
 
 * **Classification Report:** A summary provided by scikit-learn that displays the precision, recall, F1-score, and support (the number of true instances) for each individual class in the dataset.
+
+To understand how these metrics apply to multi-class classification (where you have more than two categories, such as Task 2 with 6 topics), you need to use a **One-vs-Rest** approach. 
+
+In a binary problem, you have a clear "Positive" and "Negative" class. In a multi-class problem, there is no single positive class. Instead, you calculate the metrics for *each class individually* by treating that specific class as the "Positive" class and grouping all other classes together as the "Negative" class.
+
+
+
+For a given class, let's call it **Class A**, the components are defined as follows:
+
+* **True Positives ($TP_A$):** The model correctly predicted Class A. (Actual = A, Predicted = A)
+* **True Negatives ($TN_A$):** The model correctly predicted that the instance was *not* Class A. (Actual $\neq$ A, Predicted $\neq$ A)
+* **False Positives ($FP_A$):** The model incorrectly predicted Class A. (Actual $\neq$ A, Predicted = A)
+* **False Negatives ($FN_A$):** The model failed to predict Class A when it should have. (Actual = A, Predicted $\neq$ A)
+
+1.  **Per-Class Calculation:** First, using the definitions above, the model calculates the basic metrics (Precision, Recall, F1-Score) strictly for Class A. 
+    * $\text{Precision}_A = \frac{TP_A}{TP_A + FP_A}$
+2.  **Repeat for All Classes:** The model repeats this process for Class B, Class C, and so on, until every class has its own Precision, Recall, and F1-Score.
+3.  **Aggregation:** Because having a list of metrics for every single class is difficult to evaluate as a single model score, you aggregate these individual scores using the averaging methods you provided:
+    * **Macro-Average:** You take the unweighted mean of all the individual class scores. This gives equal importance to every class, making it useful if you care about minority classes just as much as majority classes.
+    * **Weighted-Average:** You take the mean of all the individual class scores, but multiply each by the proportion of instances that actually belong to that class. This favors the majority classes.
+    * **Micro-Average:** Instead of averaging the final percentages, you sum up all the global $TP$, $FP$, and $FN$ across all classes first, and then apply the standard formula. In multi-class problems where every instance is assigned exactly one label, Micro-Precision, Micro-Recall, and Micro-F1 will mathematically reduce to the overall **Accuracy** of the model.
+
+A **Confusion Matrix** is the standard way to visualize this multi-class behavior. In a multi-class confusion matrix, the $TP$ for a specific class is located on the diagonal. The $FPs$ for that class are the sum of the other values in its column, and the $FNs$ are the sum of the other values in its row.
 
 We do not know the labels for the test set, so we are going to split the training set into a train set and a validation set. Firstly, we will only train the model on the train set and evaluate it on the validation set using these metrics. Afterwards, to get the best possible performance on the test set, we will train on the unsplit (original) train set.
 
