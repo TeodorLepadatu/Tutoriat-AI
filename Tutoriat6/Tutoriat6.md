@@ -172,7 +172,7 @@ $$
 k(x,y) = \exp(-\gamma(x-y)^2) = \exp(-\gamma(x^2 - 2xy + y^2))
 $$
 
-* Distribute the $-\gamma$ and use exponent rules ($\exp(a+b) = \exp(a)\exp(b)$):
+* Distribute the $-\gamma$.
 
 $$
 \exp(-\gamma x^2 - \gamma y^2 + 2\gamma xy) = \exp(-\gamma x^2) \exp(-\gamma y^2) \exp(2\gamma xy)
