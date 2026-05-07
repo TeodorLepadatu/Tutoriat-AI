@@ -59,3 +59,53 @@ There are several standard kernel functions you can use depending on the data:
 * The final prediction is generated using the dot product: $f(x_{N+1}) = K_x^T c$.
 
 *Note: Kernel methods operate on a solid theoretical foundation utilizing Hilbert spaces (which deal with infinite-dimensional vectors and matrices) and, alongside Neural Networks, serve as the primary methodology for introducing non-linearity into machine learning problems.*
+
+### Application of Kernel Methods: Support Vector Machines
+
+A Support Vector Machine (SVM) is a powerful supervised learning model primarily used for classification tasks. While it can handle complex, high-dimensional data, its core concept is highly intuitive and geometric.
+
+The primary objective of an SVM is to draw a line (or a multi-dimensional plane) that separates different classes of data. Instead of just finding *any* line that separates the classes, the SVM algorithm looks for the optimal line that provides the maximum space between the classes.
+
+#### Core Concepts
+
+*   **Hyperplane:** In a 2D space, this is simply a straight line that separates two classes (e.g., spam vs. not spam). In 3D, it is a flat plane. For higher dimensions, it is referred to generally as a hyperplane. This is your decision boundary.
+*   **Margin:** This is the distance between the hyperplane and the closest data points from each class. The algorithm is designed to maximize this margin, making the model more robust to new, unseen data.
+*   **Support Vectors:** These are the critical data points that lie closest to the decision boundary. They are called "support vectors" because they actively define the margin and the position of the hyperplane. If you remove or move other data points further away, the boundary will not change, but moving a support vector will alter the model.
+*   **The "Kernel Trick":** As discussed in your kernel methods context, real-world data is rarely separable by a simple straight line. SVMs use kernel functions (like Polynomial or Radial Basis Function) to project the data into a higher-dimensional space where a linear separation becomes possible, without incurring massive computational costs.
+
+---
+
+### Implementation Example
+
+Below is a Python code snippet using `scikit-learn` that solves a binary classification problem using an SVM with a linear kernel. 
+
+```python
+import numpy as np
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+iris = datasets.load_iris()
+
+X = iris.data[:, :2] # take only 2 dimensions for visualization
+y = iris.target
+
+# class 0: Setosa, class 1: Versicolor
+binary_mask = y != 2
+X = X[binary_mask]
+y = y[binary_mask]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+svm_classifier = SVC(kernel='linear', C=1.0)
+
+svm_classifier.fit(X_train, y_train)
+
+predictions = svm_classifier.predict(X_test)
+
+accuracy = accuracy_score(y_test, predictions)
+print(f"Classification Accuracy: {accuracy * 100:.2f}%")
+```
