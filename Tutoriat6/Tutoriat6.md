@@ -143,6 +143,7 @@ Solve the non-linear XOR classification problem using a polynomial kernel.
     $\phi(x)^T \phi(y) = 1444$
 * Then, we calculate the kernel directly in the original 3-dimensional space using the definition $k(x,y) = (x^T y)^2$:
     $x^T y = (2 \times 3) + (3 \times 4) + (4 \times 5) = 6 + 12 + 20 = 38$
+  
     $k(x,y) = 38^2 = 1444$
 * **Conclusion:** Both methods yield identical results (1444), mathematically validating that $\phi(x)^T \phi(y) = k(x,y)$.
 
