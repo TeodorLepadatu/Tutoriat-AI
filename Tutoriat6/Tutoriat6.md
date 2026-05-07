@@ -109,3 +109,135 @@ predictions = svm_classifier.predict(X_test)
 accuracy = accuracy_score(y_test, predictions)
 print(f"Classification Accuracy: {accuracy * 100:.2f}%")
 ```
+
+### Exercises
+
+**Exercise 1**
+Given two vectors $x = [2, 3, 4]^T$ and $y = [3, 4, 5]^T$. Consider a kernel $k(x,y) = (x^T y)^2$ which has the associated transformation $\phi(x) = [x_1^2, x_1 x_2, x_1 x_3, x_2 x_1, x_2^2, x_2 x_3, x_3 x_1, x_3 x_2, x_3^2]^T$. Verify that $k(x,y) = \phi(x)^T \phi(y)$.
+
+**Exercise 2**
+Given a polynomial kernel $k(x,y) = (x^T y + 2)^2$ for any $x, y \in \mathbb{R}^2$, calculate the mapping $\phi(z)$. Is this mapping unique?
+
+**Exercise 3**
+For the 1-dimensional Radial Basis Function (RBF) kernel, show that the feature space is infinite.
+
+**Exercise 4**
+Solve the non-linear XOR classification problem using a polynomial kernel.
+
+---
+
+### Solutions
+
+**Solution 1**
+* Our initial vectors contain 3 elements, meaning the initial dimension is $d=3$.
+* The transformation mapping $\phi$ results in a vector with 9 elements, meaning the new dimension is $D=9$.
+* First, we apply the transformation element by element to vector $x$. Given $x_1=2, x_2=3, x_3=4$:
+    $\phi(x) = [2^2, 2 \times 3, 2 \times 4, 3 \times 2, 3^2, 3 \times 4, 4 \times 2, 4 \times 3, 4^2]^T$
+    $\phi(x) = [4, 6, 8, 6, 9, 12, 8, 12, 16]^T$
+* Next, we apply the same transformation to vector $y$. Given $y_1=3, y_2=4, y_3=5$:
+    $\phi(y) = [3^2, 3 \times 4, 3 \times 5, 4 \times 3, 4^2, 4 \times 5, 5 \times 3, 5 \times 4, 5^2]^T$
+    $\phi(y) = [9, 12, 15, 12, 16, 20, 15, 20, 25]^T$
+* Now, we calculate the dot product explicitly in the 9-dimensional feature space by multiplying corresponding elements and summing them:
+    $\phi(x)^T \phi(y) = (4 \times 9) + (6 \times 12) + (8 \times 15) + (6 \times 12) + (9 \times 16) + (12 \times 20) + (8 \times 15) + (12 \times 20) + (16 \times 25)$
+    $\phi(x)^T \phi(y) = 36 + 72 + 120 + 72 + 144 + 240 + 120 + 240 + 400$
+    $\phi(x)^T \phi(y) = 1444$
+* Then, we calculate the kernel directly in the original 3-dimensional space using the definition $k(x,y) = (x^T y)^2$:
+    $x^T y = (2 \times 3) + (3 \times 4) + (4 \times 5) = 6 + 12 + 20 = 38$
+    $k(x,y) = 38^2 = 1444$
+* **Conclusion:** Both methods yield identical results (1444), mathematically validating that $\phi(x)^T \phi(y) = k(x,y)$.
+
+**Solution 2**
+* We begin by expanding the kernel function algebraically. Let $x = [x_1, x_2]^T$ and $y = [y_1, y_2]^T$:
+
+$$
+k(x,y) = (x^T y + 2)^2 = \left( \begin{bmatrix} x_1 & x_2 \end{bmatrix} \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} + 2 \right)^2 = (x_1 y_1 + x_2 y_2 + 2)^2
+$$
+
+* We expand the squared polynomial using the formula $(a+b+c)^2 = a^2 + b^2 + c^2 + 2ab + 2ac + 2bc$:
+
+$$
+(x_1 y_1 + x_2 y_2 + 2)^2 = x_1^2 y_1^2 + x_2^2 y_2^2 + 4 + 2 x_1 x_2 y_1 y_2 + 4 x_1 y_1 + 4 x_2 y_2
+$$
+
+* To express this sum as a dot product of the form $\phi(x)^T \phi(y)$, we group the corresponding terms for $x$ and $y$ and split the constants symmetrically:
+    $= (2 \times 2) + (2x_1 \times 2y_1) + (2x_2 \times 2y_2) + (\sqrt{2}x_1 x_2 \times \sqrt{2}y_1 y_2) + (x_1^2 \times y_1^2) + (x_2^2 \times y_2^2)$
+* Extracting the terms that belong solely to the input variable yields the feature map:
+    $\phi(z) = [2, 2z_1, 2z_2, \sqrt{2}z_1 z_2, z_1^2, z_2^2]^T$
+* **Uniqueness:** This mapping is not strictly unique. One could reorder the elements in the vector, or factor the coefficients differently (e.g., introducing negative signs such as $[-2, -2z_1, -2z_2, -\sqrt{2}z_1 z_2, -z_1^2, -z_2^2]^T$). As long as the dot product $\phi(x)^T \phi(y)$ reconstructs the original expanded polynomial, the mapping is valid.
+
+**Solution 3**
+* We use the Taylor series expansion to prove the infinite dimensionality. We start with the 1D RBF kernel formula:
+
+$$
+k(x,y) = \exp(-\gamma(x-y)^2) = \exp(-\gamma(x^2 - 2xy + y^2))
+$$
+
+* Distribute the $-\gamma$ and use exponent rules ($\exp(a+b) = \exp(a)\exp(b)$):
+
+$$
+\exp(-\gamma x^2 - \gamma y^2 + 2\gamma xy) = \exp(-\gamma x^2) \exp(-\gamma y^2) \exp(2\gamma xy)
+$$
+
+* Now, we expand the term $\exp(2\gamma xy)$ using the standard infinite Taylor series $\exp(z) = 1 + \frac{z}{1!} + \frac{z^2}{2!} + \frac{z^3}{3!} + \dots$, where $z = 2\gamma xy$:
+
+$$
+= \exp(-\gamma x^2) \exp(-\gamma y^2) \left( 1 + \frac{2\gamma xy}{1!} + \frac{(2\gamma xy)^2}{2!} + \frac{(2\gamma xy)^3}{3!} + \dots \right)
+$$
+
+* We then distribute the exponents over $x$ and $y$ to perfectly separate the terms:
+
+$$
+= \exp(-\gamma x^2) \exp(-\gamma y^2) \left( 1 + \frac{2\gamma}{1!} x y + \frac{(2\gamma)^2}{2!} x^2 y^2 + \frac{(2\gamma)^3}{3!} x^3 y^3 + \dots \right)
+$$
+
+* To construct the dot product format $\phi(x)^T \phi(y)$, we split the coefficients equally using square roots:
+
+$$
+= \exp(-\gamma x^2) \exp(-\gamma y^2) \left[ (1 \times 1) + \left(\sqrt{\frac{2\gamma}{1!}}x \times \sqrt{\frac{2\gamma}{1!}}y\right) + \left(\sqrt{\frac{(2\gamma)^2}{2!}}x^2 \times \sqrt{\frac{(2\gamma)^2}{2!}}y^2\right) + \dots \right]
+$$
+
+* This allows us to extract the specific mapping vector $\phi(z)$. We pull the $\exp(-\gamma z^2)$ term inside the vector as a scalar multiplier:
+    $\phi(z) = \exp(-\gamma z^2) \left[ 1, \sqrt{\frac{2\gamma}{1!}}z, \sqrt{\frac{(2\gamma)^2}{2!}}z^2, \sqrt{\frac{(2\gamma)^3}{3!}}z^3, \dots \right]^T$
+* **Conclusion:** Because the Taylor series is an infinite sum, the resulting feature vector $\phi(z)$ inherently contains an infinite number of terms, proving that the RBF feature space is infinite-dimensional.
+
+**Solution 4**
+* In the standard XOR problem, data is not linearly separable in 2D space. Instead of using binary 0 and 1, we map the coordinates to -1 and 1. The XOR logic dictates that identical inputs give one class, and opposite inputs give the other class. The four data points and their labels $y_i$ are:
+    $x_1 = [-1, -1]^T \implies y_1 = 1$
+    $x_2 = [-1, 1]^T \implies y_2 = -1$
+    $x_3 = [1, -1]^T \implies y_3 = -1$
+    $x_4 = [1, 1]^T \implies y_4 = 1$
+* We utilize the polynomial kernel defined as $k(x,y) = (x^T y + 1)^2$. Expanding this algebraically yields the corresponding transformation $\phi(z)$ into a $D=6$ dimensional space:
+    $\phi(z) = [1, \sqrt{2}z_1, \sqrt{2}z_2, z_1^2, z_2^2, \sqrt{2}z_1 z_2]^T$
+* We map each of our four original points into this 6-dimensional space by substituting their $x_1$ and $x_2$ values:
+    $\phi(x_1) = [1, \sqrt{2}(-1), \sqrt{2}(-1), (-1)^2, (-1)^2, \sqrt{2}(-1)(-1)]^T = [1, -\sqrt{2}, -\sqrt{2}, 1, 1, \sqrt{2}]^T$
+    $\phi(x_2) = [1, \sqrt{2}(-1), \sqrt{2}(1), (-1)^2, 1^2, \sqrt{2}(-1)(1)]^T = [1, -\sqrt{2}, \sqrt{2}, 1, 1, -\sqrt{2}]^T$
+    $\phi(x_3) = [1, \sqrt{2}(1), \sqrt{2}(-1), 1^2, (-1)^2, \sqrt{2}(1)(-1)]^T = [1, \sqrt{2}, -\sqrt{2}, 1, 1, -\sqrt{2}]^T$
+    $\phi(x_4) = [1, \sqrt{2}(1), \sqrt{2}(1), 1^2, 1^2, \sqrt{2}(1)(1)]^T = [1, \sqrt{2}, \sqrt{2}, 1, 1, \sqrt{2}]^T$
+* To determine if a linear boundary exists in this new space $D=6$ that separates the classes, we must find a linear weight vector $w = [w_1, w_2, w_3, w_4, w_5, w_6]^T$ such that:
+    $w^T \phi(x_i) > 0$ when $y_i = 1$
+    $w^T \phi(x_i) < 0$ when $y_i = -1$
+* To solve this as a single system of inequalities, we multiply the equations for the negative classes by -1, forcing all conditions to be strictly greater than zero ($y_i \cdot w^T \phi(x_i) > 0$):
+    For $x_1$ (Class  1): $1 \cdot [1, -\sqrt{2}, -\sqrt{2}, 1, 1, \sqrt{2}] w > 0$
+    For $x_2$ (Class -1): $-1 \cdot [1, -\sqrt{2}, \sqrt{2}, 1, 1, -\sqrt{2}] w > 0 \implies [-1, \sqrt{2}, -\sqrt{2}, -1, -1, \sqrt{2}] w > 0$
+    For $x_3$ (Class -1): $-1 \cdot [1, \sqrt{2}, -\sqrt{2}, 1, 1, -\sqrt{2}] w > 0 \implies [-1, -\sqrt{2}, \sqrt{2}, -1, -1, \sqrt{2}] w > 0$
+    For $x_4$ (Class  1): $1 \cdot [1, \sqrt{2}, \sqrt{2}, 1, 1, \sqrt{2}] w > 0$
+* Representing this as a matrix multiplication inequality:
+
+$$
+\begin{bmatrix} 
+1 & -\sqrt{2} & -\sqrt{2} & 1 & 1 & \sqrt{2} \\ 
+-1 & \sqrt{2} & -\sqrt{2} & -1 & -1 & \sqrt{2} \\ 
+-1 & -\sqrt{2} & \sqrt{2} & -1 & -1 & \sqrt{2} \\ 
+1 & \sqrt{2} & \sqrt{2} & 1 & 1 & \sqrt{2} 
+\end{bmatrix} 
+\begin{bmatrix} w_1 \\ w_2 \\ w_3 \\ w_4 \\ w_5 \\ w_6 \end{bmatrix} > \begin{bmatrix} 0 \\ 0 \\ 0 \\ 0 \end{bmatrix}
+$$
+
+* Inspecting the final column of the matrix, we observe that the value is consistently positive ($\sqrt{2}$) across all rows, representing the feature $\sqrt{2}x_1 x_2$.
+* If we select the weight vector $w = [0, 0, 0, 0, 0, 1]^T$, the matrix multiplication simplifies to outputting the last column:
+
+$$
+\begin{bmatrix} \sqrt{2} \\ \sqrt{2} \\ \sqrt{2} \\ \sqrt{2} \end{bmatrix} > \begin{bmatrix} 0 \\ 0 \\ 0 \\ 0 \end{bmatrix}
+$$
+
+* **Conclusion:** Because $\sqrt{2} > 0$ holds true for all four points, the chosen weight vector perfectly separates the classes. This proves mathematically that applying the polynomial feature map makes the previously inseparable XOR problem linearly separable in the higher-dimensional space.
