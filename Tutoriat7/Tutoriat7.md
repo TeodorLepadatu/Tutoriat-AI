@@ -50,8 +50,7 @@ $$Softmax(z_i) = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}$$
 It ensures that the correct class score is higher than all other incorrect class scores by at least a fixed margin (in this case, a margin of 1).
 
 For a single example $i$, the loss $L_i$ is defined as:
-$$L_i = \sum_{j 
-eq y_i} \max(0, s_j - s_{y_i} + 1)$$
+$$L_i = \sum_{j \neq y_i} \max(0, s_j - s_{y_i} + 1)$$
 
 Where:
 
@@ -65,7 +64,7 @@ $\max(0, \dots)$ clamps negative values to zero. If the correct class score ($s_
 
 To compute the overall objective function for training, the average loss across all training samples is combined with a regularization term.
 
-$$L = \frac{1}{N} \sum_{i=1}^N L_i + R(W)$$
+$$L = \frac{1}{N} \sum_{i=1}^N L_i + R(W)$$
 
 Where:
 
@@ -87,7 +86,7 @@ Gradient descent works by calculating the gradient (the derivative) of the loss 
 
 The size of the step the algorithm takes during each update is controlled by a crucial hyperparameter called the Learning Rate ($\alpha$). The general update rule for a parameter $x$ is: 
 
-$$x_{new} = x_{old} - \alpha \cdot \nabla L(x_{old})$$,
+$$x_{new} = x_{old} - \alpha \cdot \nabla L(x_{old})$$
 
 where $\nabla L(x_{old})$ is the gradient of the loss function at the current position. If the learning rate is too small, the model will take a very long time to reach the minimum. If the learning rate is too large, the algorithm might overshoot the minimum and fail to converge (or even diverge, making the loss worse).
 
@@ -130,3 +129,55 @@ Here is what happens if we change the learning rate to **$\alpha = 1.1$** while 
 * Update the parameter: $x_{new} = -8.64 - (1.1 \cdot -17.28) = -8.64 + 19.008 = 10.368$
 
 Because the step size is too large, the updates continuously overshoot the minimum at $x = 0$. The model gets progressively worse, violently oscillating between positive and negative values that grow toward infinity.
+
+Up until now, we have seen a loss function which had only one parameter. But what happens if the loss functions has more parameters (like in a real ML model)?
+
+
+When a loss function has multiple parameters, we compute the gradient using **partial derivatives**. A partial derivative measures how the loss changes when we adjust one parameter while keeping all other parameters constant.
+
+Real machine learning models consist of deeply nested functions (e.g., $f(g(x))$ ). To calculate the gradients for parameters buried deep within these layers, we use the **Chain Rule** of calculus. The chain rule states that the derivative of a composite function is the product of the derivatives of its individual parts:
+
+$$\frac{\partial f}{\partial x} = \frac{\partial f}{\partial g} \cdot \frac{\partial g}{\partial x}$$
+
+*Example:*
+
+Let's define a loss function that mimics a multivariable loss function: $L(x, y, z) = (x \cdot y - z)^2$. 
+
+The absolute minimum of this function is $0$, which is reached perfectly whenever $x \cdot y = z$. 
+
+We can find this minimum manually using 1st year calculus. You do this by calculating all the partial derivatives, setting them equal to $0$ to find where the slope is perfectly flat, and then using the Hessian matrix to verify that this flat point is indeed a minimum (and not a maximum or a saddle point).
+
+But, as we are not studying calculus here, want just to minimize $L$ using Gradient Descent.
+
+**1. Calculate the partial derivatives (using the Chain Rule):**
+Let's introduce an intermediate variable $q = x \cdot y - z$. Now our loss function is simply $L = q^2$.
+
+The derivative of the outer function is $\frac{\partial L}{\partial q} = 2q$. 
+
+Now we use the chain rule to find the derivatives for each specific parameter:
+*   **For $x$:** $\frac{\partial L}{\partial x} = \frac{\partial L}{\partial q} \cdot \frac{\partial q}{\partial x} = (2q) \cdot y = 2y(x \cdot y - z)$
+*   **For $y$:** $\frac{\partial L}{\partial y} = \frac{\partial L}{\partial q} \cdot \frac{\partial q}{\partial y} = (2q) \cdot x = 2x(x \cdot y - z)$
+*   **For $z$:** $\frac{\partial L}{\partial z} = \frac{\partial L}{\partial q} \cdot \frac{\partial q}{\partial z} = (2q) \cdot (-1) = -2(x \cdot y - z)$
+
+**2. Run a step of Gradient Descent:**
+Let's set our learning rate $\alpha = 0.1$ and pick starting values: $x_{old} = 1$, $y_{old} = 2$, $z_{old} = 4$.
+
+*Initial state*: 
+$q = (1 \cdot 2) - 4 = -2$
+*Initial Loss*: $L = (-2)^2 = 4$
+
+*Calculate gradients at the current position:*
+*   $\frac{\partial L}{\partial x} = 2 \cdot 2 \cdot (-2) = -8$
+*   $\frac{\partial L}{\partial y} = 2 \cdot 1 \cdot (-2) = -4$
+*   $\frac{\partial L}{\partial z} = -2 \cdot (-2) = 4$
+
+*Update all parameters simultaneously:*
+*   $x_{new} = x_{old} - \alpha \cdot \frac{\partial L}{\partial x} = 1 - (0.1 \cdot -8) = 1.8$
+*   $y_{new} = y_{old} - \alpha \cdot \frac{\partial L}{\partial y} = 2 - (0.1 \cdot -4) = 2.4$
+*   $z_{new} = z_{old} - \alpha \cdot \frac{\partial L}{\partial z} = 4 - (0.1 \cdot 4) = 3.6$
+
+*Calculate the New Loss:*
+$q_{new} = (1.8 \cdot 2.4) - 3.6 = 4.32 - 3.6 = 0.72$
+$L_{new} = (0.72)^2 = 0.5184$
+
+By taking a single step in the opposite direction of the respective gradients, the total loss plummeted from $4$ to $0.5184$, successfully going towards the minimum.
