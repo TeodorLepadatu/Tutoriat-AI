@@ -81,7 +81,7 @@ Now that we have a loss function that outputs a number telling us how wrong our 
 
 The most fundamental optimization algorithm is called **Gradient Descent (GD)**. All of the other optimization algorithms in ML are a derivation of GD.
 
-Gradient descent works by calculating the gradient (the derivative) of the loss function with respect to the model's parameters. It then updates the parameters by taking a step in the opposite direction of the gradient, aiming for the lowest possible point (the minimum loss). This approach works, because by trying to make the derivative of the loss 0, we actually minimize the loss (see [Fermat's Theorem](https://en.wikipedia.org/wiki/Fermat%27s_Last_Theorem))
+Gradient descent works by calculating the gradient (the derivative) of the loss function with respect to the model's parameters. It then updates the parameters by taking a step in the opposite direction of the gradient, aiming for the lowest possible point (the minimum loss). This approach works, because by trying to make the derivative of the loss 0, we actually minimize the loss (see [Fermat's Theorem](https://en.wikipedia.org/wiki/Interior_extremum_theorem))
 
 **The update rule and Learning Rate**
 
