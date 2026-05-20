@@ -286,4 +286,6 @@ If nothing works, we can also look at the gradients inside the model to see if t
 
 *Quick note*: For your project, it is very easy to get around 65% - 70% accuracy without much effort. I literally trained a vibe-coded model (with a lot of explainations from me) for 80 epochs and got 68% accuracy and it was nowhere near close to overfitting. I stopped training because I needed my laptop for other stuff and it is not really usable while training a ML model. Today's LLMs are not that good at giving you solutions for computer vision problems, because they do not really understand the data, but they can help you write the code.
 
+For the documentation part, I am giving you a link to [my project from last year](https://github.com/TeodorLepadatu/Deepfake_Image_classifier) so that you have a model. The task was different, but it was still computer vision and they still want the same things written in the documentation.
+
 Good luck with your project, and do not hesitate to ask for help if you need it!
