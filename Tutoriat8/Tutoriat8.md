@@ -65,7 +65,7 @@ $$y_i=\gamma\hat{x}_i+\beta$$
 Here, $\epsilon$ is a small constant added for numerical stability (preventing division by zero). The variables $\gamma$ (scale) and $\beta$ (shift) are learnable parameters updated during training, ensuring the normalization does not reduce the expressive power of the network.
 
 * **Layer Normalization**
-Unlike Batch Normalization, Layer Normalization computes the mean and variance across all features (or hidden units) for a *single* training example, completely independent of other examples in the batch. This makes it particularly useful when batch sizes are small, or in architectures where sequence lengths vary dynamically (such as Recurrent Neural Networks and Transformers).
+Unlike Batch Normalization, Layer Normalization computes the mean and variance across all features (or hidden units) for a *single* training example, completely independent of other examples in the batch. This makes it particularly useful when batch sizes are small, or in architectures where sequence lengths vary dynamically (such as in Transformers, if you want to use them).
 
 For a single input vector $x$ containing $H$ hidden units, the process is:
 
