@@ -110,7 +110,9 @@ We also need to use activation functions to introduce non-linearity into our mod
 
 - [**ReLU**](https://www.youtube.com/watch?v=92pSi7rZJ7c): $f(x) = \max(0,x)$ `torch.nn.ReLU`
 - **Leaky [ReLU](https://www.youtube.com/watch?v=92pSi7rZJ7c)**: $f(x) = \max(0.01x,x)$ `torch.nn.LeakyReLU`
-- **ELU**: $f(x) = \begin{cases} x & \text{if } x > 0 \\ \alpha(e^x - 1) & \text{if } x \leq 0 \end{cases}$ `torch.nn.ELU`
+- **ELU** (`torch.nn.ELU`):
+
+$$f(x) = \begin{cases} x & \text{if } x > 0,  \\ \alpha(e^x - 1) & \text{if } x \leq 0 \end{cases}$$
 - **Sigmoid**: $f(x) = \frac{1}{1 + e^{-x}}$ `torch.nn.Sigmoid`
 - **Tanh**: $f(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$ `torch.nn.Tanh`
 - **GeLU**: $f(x) = x \cdot \Phi(x)$, where $\Phi(x)$ is the cumulative distribution function of the standard normal distribution. `torch.nn.GELU`
