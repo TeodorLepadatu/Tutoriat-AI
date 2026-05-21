@@ -166,7 +166,7 @@ class CNN(nn.Module):
 
 ```
 
-This is just an example of a CNN architecture. You can experiment with different architectures and see which one works better for your model. You can also try to use different numbers of layers, different numbers of filters, and different kernel sizes to see how they affect the performance of the model.
+This is just an example of a CNN architecture. You can experiment with different architectures and see which one works better for your model. You can also try to use different numbers of layers, different numbers of filters, and different kernel sizes to see how they affect the performance of the model. Something important is that you need the number of filters to increase from the first layer to the next.
 
 Another very funny thing that you can do (and it worked very well for me) is to use randomly generated model architectures. You can generate random architectures by randomly selecting the number of layers, the number of filters, the kernel sizes, and the activation functions. This can be a very good way to find a good architecture for your model, as it allows you to explore a large space of possible architectures. If you want to do this, you need to implement a mechanism called *early stopping*, which will stop the training process if the model does not improve for a certain number of epochs. This will help you to save time and computational resources, as you will not have to train models that are not improving.
 
