@@ -184,96 +184,127 @@ $$\mathbf{b}^{[l]} = \mathbf{b}^{[l]} - \alpha \frac{\partial \mathcal{L}}{\part
 
 ### Backpropagation Example
 
-Consider a neural network with 1 input, 1 hidden neuron, and 1 output neuron. This yields exactly 4 parameters (2 weights, 2 biases) and uses 2 ReLU activation functions.
+Consider a fully connected network with 2 input neurons($x_1$ and $x_2$), one hidden layer with 2 neurons ($h_1$ and $h_2$) and one output layer with 1 neuron ($h_3$).
 
-**1. Network Architecture & Initialization**
-* **Input ($x$):** $2$
-* **True Target ($y$):** $5$
-* **Layer 1 (Hidden):** 1 neuron, ReLU activation ($f^{[1]}$)
-  * Weight $w^{[1]} = 1$
-  * Bias $b^{[1]} = -1$
-* **Layer 2 (Output):** 1 neuron, ReLU activation ($f^{[2]}$)
-  * Weight $w^{[2]} = 2$
-  * Bias $b^{[2]} = 1$
-* **Learning Rate ($\alpha$):** $0.1$
-* **Loss Function ($\mathcal{L}$):** Half Mean Squared Error for a single sample: $\mathcal{L} = \frac{1}{2}(a^{[2]} - y)^2$
+Suppose the input is $x_1 = 1$, $x_2 = 0$.
 
----
+$x_1$ is connected to $h_1$ with the weight $w_1 = 1$ and to $h_2$ with the weight $w_2 = 0.5$.
 
-### Step 1: The Forward Pass
+$x_2$ is connected to $h_1$ with the weight $w_3 = 1$ and to $h_2$ with the weights $w_4 = -0.5$.
 
-We pass the input $x$ through the network to get our prediction $a^{[2]}$.
+$h_1$ has a bias $b_1 = 0.5$ and $h_2$ has a bias $b_2 = 0$.
 
-**Layer 1:**
+Both $h_1$ and $h_2$ have the activation function ReLU.
 
-$$z^{[1]} = w^{[1]}x + b^{[1]} = (1)(2) + (-1) = 1$$
+$h_1$ is connected to $h_3$ and has a weight $w_5 = 1$.
 
-$$a^{[1]} = \max(0, z^{[1]}) = \max(0, 1) = 1$$
+$h_2$ is connected to $h_3$ and has a weight $w_6 = 1$.
 
-**Layer 2:**
+$h_3$ has a bias $b_3 = 0.5$.
 
-$$z^{[2]} = w^{[2]}a^{[1]} + b^{[2]} = (2)(1) + 1 = 3$$
+The real label of this example is 2. Consider the loss function to be $L = (\hat{y} - y)^2$, where $\hat{y}$ is the output of $h_3$ and $y$ is the real label.
 
-$$a^{[2]} = \max(0, z^{[2]}) = \max(0, 3) = 3$$
+The learning rate of this network is $\eta = 0.01$
 
-**The Loss:**
-The network predicted $3$, but the target is $5$.
+Let's do one step of backpropagation on this network.
 
-$$\mathcal{L} = \frac{1}{2}(3 - 5)^2 = \frac{1}{2}(-2)^2 = 2$$
+**Step 1: Forward pass:**
 
----
+We need to calculate the output of $h_3$ for the given input. So, we have:
 
-### Step 2: The Backward Pass
+$h_1 = \max(0, w_1 x_1 + w_3 x_2 + b_1) = \max(0, 1 \cdot 1 + 1 \cdot 0 + 0.5) = 1.5$
+and $h_2 = \max(0, w_1 x_1 + w_4 x_2 + b_2) = \max(0, 1 \cdot 1 + 0 \cdot (-0.5) + 0) = 0.5 $
 
-We calculate the gradients starting from the output and moving backward.
+Now, we can calculate the output of $h_3$:
 
-**Calculus Setup:**
-* The derivative of our loss is: $\frac{\partial \mathcal{L}}{\partial a^{[2]}} = (a^{[2]} - y)$
-* The derivative of ReLU ($f'$) is $1$ if $z > 0$, and $0$ if $z \le 0$. Since $z^{[1]} = 1$ and $z^{[2]} = 3$, both derivatives evaluate to $1$.
+$h_3 = \max(0, w_5 h_1 + w_6 h_2 + b_3) = \max(0, 1 \cdot 1.5 + 1 \cdot 0.5 + 0.5) = 2.5$. The real label is $\hat{y} = 2$, so the loss is $L = (2.5 - 2)^2 = 0.25$.
 
-**Output Layer (Layer 2) Gradients:**
-First, we calculate the error term $\delta^{[2]}$ for the output layer:
+**Step 2: Backward pass:**
 
-$$\delta^{[2]} = (a^{[2]} - y) \cdot f'^{[2]}(z^{[2]})$$
+We need to calculate the partial derivatives of the loss with respect to the weights and the biases. We start with the output layer. The loss function is 
 
-$$\delta^{[2]} = (3 - 5) \cdot 1 = -2$$
+$$L = (h_1 w_5 + h_2 w_6 + b_3 - y)^2$$.
 
-Now, we compute the gradients for Layer 2's parameters:
+The partial derivatives are:
 
-$$\frac{\partial \mathcal{L}}{\partial w^{[2]}} = \delta^{[2]} \cdot a^{[1]} = (-2) \cdot 1 = -2$$
+$$\frac{\partial L}{\partial w_5} = 2(h_1 w_5 + h_2 w_6 + b_3 - y) h_1 = 2(2.5 - 2) * 1.5 = 1.5$$
 
-$$\frac{\partial \mathcal{L}}{\partial b^{[2]}} = \delta^{[2]} = -2$$
+$$\frac{\partial L}{\partial w_6} = 2(h_1 w_5 + h_2 w_6 + b_3 - y) h_2 = 2(2.5 - 2) * 0.5 = 0.5$$
 
-**Hidden Layer (Layer 1) Gradients:**
-We propagate the error backward from Layer 2 to Layer 1. Because this is a scalar network, the transposed matrix $(\mathbf{W}^{[2]})^T$ is just the scalar $w^{[2]}$.
+$$\frac{\partial L}{\partial b_3} = 2(h_1 w_5 + h_2 w_6 + b_3 - y) = 2(2.5 - 2) = 1$$
 
-$$\delta^{[1]} = (w^{[2]} \cdot \delta^{[2]}) \cdot f'^{[1]}(z^{[1]})$$
+Now, we have to update the weights using gradient descent:
 
-$$\delta^{[1]} = (2 \cdot -2) \cdot 1 = -4$$
+$$w_5 = w_5 - \eta \frac{\partial L}{\partial w_5} = 1 - 0.01 * 1.5 = 0.985$$
 
-Now, we compute the gradients for Layer 1's parameters (the input $x$ acts as the previous activation $a^{[0]}$):
+$$w_6 = w_6 - \eta \frac{\partial L}{\partial w_6} = 1 - 0.01 * 0.5 = 0.995$$
 
-$$\frac{\partial \mathcal{L}}{\partial w^{[1]}} = \delta^{[1]} \cdot x = (-4) \cdot 2 = -8$$
+$$b_3 = b_3 - \eta \frac{\partial L}{\partial b_3} = 0.5 - 0.01 * 1 = 0.49$$
 
-$$\frac{\partial \mathcal{L}}{\partial b^{[1]}} = \delta^{[1]} = -4$$
+We can now go one step back to the hidden layer. In order to do this correctly, we need to calculate the derivative of the activation function as well. The activation function of $h_1$ and $h_2$ is ReLU and its derivative is:
 
----
+$$ReLU'(z) = \begin{cases}
+1, & \text{if } z > 0 \\
+0, & \text{if } z \le 0
+\end{cases}$$
 
-### Step 3: Parameter Update
+We need to calculate the partial derivatives of the loss with respect to $w_1$, $w_3$ and $b_1$, which do not appear explicitly in the loss function, so we need to use the chain rule:
 
-Using Gradient Descent, we adjust all 4 parameters in the opposite direction of their gradients, scaled by our learning rate $\alpha = 0.1$.
+$$\frac{\partial L}{\partial w_1} = \frac{\partial L}{\partial h_1} \cdot \frac{\partial h_1}{\partial w_1} = 2(h_1 w_5 + h_2 w_6 + b_3 - y) w_5 \cdot \frac{\partial h_1}{\partial w_1} = \frac{\partial h_1}{\partial w_1}$$
 
-**Layer 2 Updates:**
+We can obtain $\frac{\partial h_1}{\partial w_1}$ by looking at the formula of $h_1$:
 
-$$w^{[2]}_{new} = w^{[2]} - \alpha \frac{\partial \mathcal{L}}{\partial w^{[2]}} = 2 - 0.1(-2) = 2.2$$
+$$h_1 = \max(0, w_1 x_1 + w_3 x_2 + b_1)$$
 
-$$b^{[2]}_{new} = b^{[2]} - \alpha \frac{\partial \mathcal{L}}{\partial b^{[2]}} = 1 - 0.1(-2) = 1.2$$
+Since $w_1 x_1 + w_3 x_2 + b_1 = 1.5 > 0$, the derivative of ReLU is 1 so we get $\frac{\partial h_1}{\partial w_1} = x_1 = 1$. So, $\frac{\partial L}{\partial w_1} = 1$. Now, we can update $w_1$: 
 
-**Layer 1 Updates:**
+$$w_1 = w_1 - \eta \frac{\partial L}{\partial w_1} = 1 - 0.01 * 1 = 0.99$$
 
-$$w^{[1]}_{new} = w^{[1]} - \alpha \frac{\partial \mathcal{L}}{\partial w^{[1]}} = 1 - 0.1(-8) = 1.8$$
+Similarly, we can calculate $\frac{\partial L}{\partial w_3}$:
 
-$$b^{[1]}_{new} = b^{[1]} - \alpha \frac{\partial \mathcal{L}}{\partial b^{[1]}} = -1 - 0.1(-4) = -0.6$$
+$$\frac{\partial L}{\partial w_3} = \frac{\partial L}{\partial h_1} \cdot \frac{\partial h_1}{\partial w_3} = 2(h_1 w_5 + h_2 w_6 + b_3 - y) w_5 \cdot \frac{\partial h_1}{\partial w_3} = \frac{\partial h_1}{\partial w_3}$$
+
+But, since $w_1 x_1 + w_3 x_2 + b_1 = 1.5 > 0$, we have $\frac{\partial h_1}{\partial w_3} = x_2 = 0$. So, $\frac{\partial L}{\partial w_3} = 0$. Now, we can update $w_3$:
+
+$$w_3 = w_3 - \eta \frac{\partial L}{\partial w_3} = 1 - 0.01 * 0 = 1$$
+
+*Note that, because the partial derivative was 0, the parameter has not been updated.*
+
+We can now calculate $\frac{\partial L}{\partial b_1}$:
+
+$$\frac{\partial L}{\partial b_1} = \frac{\partial L}{\partial h_1} \cdot \frac{\partial h_1}{\partial b_1} = 2(h_1 w_5 + h_2 w_6 + b_3 - y) w_5 \cdot \frac{\partial h_1}{\partial b_1} = \frac{\partial h_1}{\partial b_1}$$
+
+Since $w_1 x_1 + w_3 x_2 + b_1 = 1.5 > 0$, we have $\frac{\partial h_1}{\partial b_1} = 1$. So, $\frac{\partial L}{\partial b_1} = 1$. Now, we can update $b_1$:
+
+$$b_1 = b_1 - \eta \frac{\partial L}{\partial b_1} = 0.5 - 0.01 * 1 = 0.49$$
+
+We are done with the first neuron of the hidden layer, so we can do the exact same thing for the second neuron of the hidden layer, $h_2$:
+
+The loss function at $h_2$ is
+
+$$\frac{\partial L}{\partial w_2} = \frac{\partial L}{\partial h_2} \cdot \frac{\partial h_2}{\partial w_2} = 2(h_1 w_5 + h_2 w_6 + b_3 - y) w_6 \cdot \frac{\partial h_2}{\partial w_2} = \frac{\partial h_2}{\partial w_2}$$
+
+Since $w_1 x_1 + w_4 x_2 + b_2 = 0.5 > 0$, we have $\frac{\partial h_2}{\partial w_2} = x_1 = 1$. So, $\frac{\partial L}{\partial w_2} = 1$. Now, we can update $w_2$:
+
+$$w_2 = w_2 - \eta \frac{\partial L}{\partial w_2} = 0.5 - 0.01 * 1 = 0.49$$
+
+Similarly, we can calculate $\frac{\partial L}{\partial w_4}$:
+
+$$\frac{\partial L}{\partial w_4} = \frac{\partial L}{\partial h_2} \cdot \frac{\partial h_2}{\partial w_4} = 2(h_1 w_5 + h_2 w_6 + b_3 - y) w_6 \cdot \frac{\partial h_2}{\partial w_4} = \frac{\partial h_2}{\partial w_4}$$
+
+Since $w_1 x_1 + w_4 x_2 + b_2 = 0.5 > 0$, we have $\frac{\partial h_2}{\partial w_4} = x_2 = 0$. So, $\frac{\partial L}{\partial w_4} = 0$. Now, we can update $w_4$:
+
+$$w_4 = w_4 - \eta \frac{\partial L}{\partial w_4} = -0.5 - 0.01 * 0 = -0.5$$
+
+Finally, we can calculate $\frac{\partial L}{\partial b_2}$:
+
+$$\frac{\partial L}{\partial b_2} = \frac{\partial L}{\partial h_2} \cdot \frac{\partial h_2}{\partial b_2} = 2(h_1 w_5 + h_2 w_6 + b_3 - y) w_6 \cdot \frac{\partial h_2}{\partial b_2} = \frac{\partial h_2}{\partial b_2}$$
+
+Since $w_1 x_1 + w_4 x_2 + b_2 = 0.5 > 0$, we have $\frac{\partial h_2}{\partial b_2} = 1$. So, $\frac{\partial L}{\partial b_2} = 1$. Now, we can update $b_2$:
+
+$$b_2 = b_2 - \eta \frac{\partial L}{\partial b_2} = 0 - 0.01 * 1 = -0.01$$
+
+Take a deep breath, we are done...
 
 ## Gradient Descent Variants
 
