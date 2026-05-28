@@ -213,7 +213,7 @@ Let's do one step of backpropagation on this network.
 We need to calculate the output of $h_3$ for the given input. So, we have:
 
 $h_1 = \max(0, w_1 x_1 + w_3 x_2 + b_1) = \max(0, 1 \cdot 1 + 1 \cdot 0 + 0.5) = 1.5$
-and $h_2 = \max(0, w_1 x_1 + w_4 x_2 + b_2) = \max(0, 1 \cdot 1 + 0 \cdot (-0.5) + 0) = 0.5 $
+and $h_2 = \max(0, w_2 x_1 + w_4 x_2 + b_2) = \max(0, 0.5 \cdot 1 + 0 \cdot (-0.5) + 0) = 0.5 $
 
 Now, we can calculate the output of $h_3$:
 
