@@ -217,7 +217,7 @@ and $h_2 = \max(0, w_2 x_1 + w_4 x_2 + b_2) = \max(0, 0.5 \cdot 1 + 0 \cdot (-0.
 
 Now, we can calculate the output of $h_3$:
 
-$h_3 = 0, w_5 h_1 + w_6 h_2 + b_3 = 0, 1 \cdot 1.5 + 1 \cdot 0.5 + 0.5 = 2.5$. The real label is $\hat{y} = 2$, so the loss is $L = (2.5 - 2)^2 = 0.25$.
+$h_3 = 0, w_5 h_1 + w_6 h_2 + b_3 = 0, 1 \cdot 1.5 + 1 \cdot 0.5 + 0.5 = 2.5 = \hat{y}$. The real label is $y = 2$, so the loss is $L = (2.5 - 2)^2 = 0.25$.
 
 **Step 2: Backward pass:**
 
