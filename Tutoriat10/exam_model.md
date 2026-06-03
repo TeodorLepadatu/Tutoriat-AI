@@ -178,14 +178,130 @@ Answer: f) None of the above.
 Explaination: None of these heuristic combinations guarantee admissibility across any map configuration. For options a, d, and e, the inclusion of $\hat{h_2}$ (which scales with NPF) causes overestimations. For instance, if the character is at the sink holding F plates, the true cost to finish is 0 energy points. Any multiplier or addition of $\hat{h_2}$ will result in a value $> 0$, overestimating the cost. Regarding options b and c, the inclusion of $\hat{h_3}$ means that at the exact goal state (true cost = 0), the function will still evaluate to a number greater than 0 (e.g., $\frac{1}{2} = 0.5$), which violates the primary admissibility rule where $h(goal) = 0$.
 
 ### Problem 2: 4-piece game
-
 TODO
 
 ## Part 2
 
 ### Problem 1: Multiple choice questions
+1. Which of the following variables allows us to search for the maximum margin hyperplane in the case of a non-linearly separable configuration of points, by ignoring certain points?
+a) $w$
+b) Not applicable
+c) $\gamma$
+d) $\xi$"
 
-TODO
+Solution: d) $\xi$"
+* **a) $w$**: the weight vector, which defines the orientation and slope of the separating hyperplane.
+* **c) $\gamma$**: denote the geometric margin itself
+* **d) $\xi$**: used to handle non-linearly separable data.
+
+2. What is the effect of applying the batch normalization operation on a batch consisting of a single example?
+a) The norm of the example becomes 1
+b) The norm of the example becomes 0
+c) The example remains unmodified
+d) It cannot be applied because it implies division by 0
+
+Solution: b) The norm of the example becomes 0
+The standard formula for Batch Normalization is:
+  $$\hat{x} = \frac{x - \mu}{\sqrt{\sigma^2 + \epsilon}}$$
+If a batch consists of only a single example ($N = 1$), the batch mean $\mu$ is equal to the value of the example itself ($x$), meaning the numerator becomes $x - \mu = 0$. Concurrently, the sample variance $\sigma^2$ is $0$. A tiny smoothing term $\epsilon$ is added to avoid a hard mathematical division by zero ($\frac{0}{0}$). This results in:
+  $$\hat{x} = \frac{0}{\sqrt{0 + \epsilon}} = 0$$
+
+3. How could the formula $\max\left(0, \frac{e^x - e^{-x}}{e^x + e^{-x}}\right)$ be rewritten?
+a) $ReLU(\tanh(x))$
+b) $\tanh(ReLU(x))$
+c) $ReLU(\sigma(x))$
+d) $\sigma(\tanh(x))$
+
+Solution: a) $ReLU(\tanh(x))$
+
+4. The result of applying the string kernel function based on presence bits using 2-grams on the strings "ana are mere" and "ioana are banane" is:
+a) 11
+b) 7
+c) 8
+d) 10
+
+Soltuion: b) 7
+A presence-bit 2-gram string kernel evaluates the dot product of two binary vectors representing whether unique character pairs exist in the texts.
+  * Unique 2-grams in `"ana are mere"`: `an`, `na`, `a `, ` a`, `ar`, `re`, `e `, ` m`, `me`, `er`
+  * Unique 2-grams in `"ioana are banane"`: `io`, `oa`, `an`, `na`, `a `, ` a`, `ar`, `re`, `e `, ` b`, `ba`, `ne`
+  
+  The intersecting shared 2-grams between both strings are: `an`, `na`, `a `, ` a`, `ar`, `re`, and `e `. Counting these common unique tokens yields exactly **7** overlapping elements.
+
+5. Which of the following operations produces a valid kernel function?
+a) $k_1(k_2(x, z), k_3(x, z))$
+b) $k_1(x) + k_2(y)$
+c) $k_1(x, y) + k_2(x^2, y) \cdot k_3(x, y^2)$
+d) None of the choices
+
+Solution: d) None of the choices
+Valid kernels must adhere strictly to Mercer's theorem and structural algebraic closure properties (such as closure under addition and multiplication over matching variable domains). 
+  * Option B combines unrelated single coordinates ($x$ and $y$) linearly without evaluating pair relationships properly.
+  * Option C features asymmetrical mappings within the coordinate spaces ($x^2$), which violates the positive semi-definiteness framework required for general validation.
+    
+6. What function can be applied to transform the $L_2$ distance into a kernel function?
+a) Linear kernel
+b) RBF kernel
+c) Intersection kernel
+d) Polynomial kernel
+
+Solution:b) RBF kernel
+The Radial Basis Function (Gaussian) kernel is defined as:
+  $$k(x, y) = \exp\left(-\gamma \|x - y\|^2\right)$$
+  This formula applies a non-linear exponential transformation directly onto the squared $L_2$ Euclidean distance ($\|x - y\|$) separating two vectors.
+
+8. What happens if we set momentum equal to 1 in the SGD with momentum algorithm?
+a) The algorithm gets stuck in a local minimum
+b) Optimization goes to infinity
+c) The algorithm becomes equivalent to standard SGD
+d) The algorithm diverges
+
+Solution: d) The algorithm diverges
+In Stochastic Gradient Descent with momentum, the velocity update follows $v_t = \beta v_{t-1} + \eta \nabla L$. Setting $\beta = 1$ removes all friction or velocity decay from previous iterations. The historical kinetic energy builds up boundlessly, forcing the optimizer to completely diverge.
+
+8. What condition must a neural network satisfy to learn non-linearly separable data?
+a) It must contain at least one hidden layer with non-linear activation
+b) It must contain at least one hidden layer
+c) It must contain at least two hidden layers
+d) It must use at least one softmax layer
+
+Solution: a) It must contain at least one hidden layer with non-linear activation
+Per the Universal Approximation Theorem, a multi-layer network requires at least one hidden layer paired with a non-linear activation function (such as ReLU, Sigmoid, or Tanh) to fit non-linear boundaries. Linear hidden layers collapse mathematically into a single, straightforward linear transformation.
+
+9. When $n \to \infty$, the empirical error becomes equivalent to:
+a) Optimization error
+b) Modeling error
+c) None of the choices
+d) Generalization error
+
+Solution: d) Generalization error
+As the size of the training dataset approaches infinity ($n \to \infty$), the empirical risk computed on that sample group converges directly to the true expected risk across the entire data distribution, which is defined as the generalization error.
+
+10. The Kendall $\tau$ correlation for the labels $[0.1; 0.2; 0.3; 0.4; 0.5]$ and predictions $[0.4; 0.2; 0.6; 1.0; 0.8]$ is:
+a) 0.4
+b) 0.5
+c) 0.6
+d) 1.5
+
+Solution: c) 0.6
+Kendall's $\tau$ evaluates the relative ranking ordering between pairs. 
+  * Labels (Sorted ascending): $[0.1, 0.2, 0.3, 0.4, 0.5] \to$ Ranks: $1, 2, 3, 4, 5$
+  * Predictions: $[0.4, 0.2, 0.6, 1.0, 0.8] \to$ Relative ordering sequence: $2, 1, 3, 5, 4$
+
+  Now we count the concordant and discordant pairs out of the $\binom{5}{2} = 10$ combinations:
+  * (1,2): Labels $(1 < 2)$, Preds $(2 > 1) \to$ **Discordant**
+  * (1,3): Labels $(1 < 3)$, Preds $(2 < 3) \to$ **Concordant**
+  * (1,4): Labels $(1 < 4)$, Preds $(2 < 5) \to$ **Concordant**
+  * (1,5): Labels $(1 < 5)$, Preds $(2 < 4) \to$ **Concordant**
+  * (2,3): Labels $(2 < 3)$, Preds $(1 < 3) \to$ **Concordant**
+  * (2,4): Labels $(2 < 4)$, Preds $(1 < 5) \to$ **Concordant**
+  * (2,5): Labels $(2 < 5)$, Preds $(1 < 4) \to$ **Concordant**
+  * (3,4): Labels $(3 < 4)$, Preds $(3 < 5) \to$ **Concordant**
+  * (3,5): Labels $(3 < 5)$, Preds $(3 < 4) \to$ **Concordant**
+  * (4,5): Labels $(4 < 5)$, Preds $(5 > 4) \to$ **Discordant**
+
+  $$\text{Concordant (C)} = 8, \quad \text{Discordant (D)} = 2$$
+  $$\tau = \frac{C - D}{\text{Total Pairs}} = \frac{8 - 2}{10} = 0.6$$
+
 ### Problem 2: Neuron
 
 Consider the following set of examples: S={([1,1,0],1), ([0,1,0],0), ([0,1,1],1), ([1,1,1],0)}.
