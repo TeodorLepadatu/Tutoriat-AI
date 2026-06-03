@@ -176,3 +176,84 @@ f) None of the above.
 Answer: f) None of the above.
 
 Explaination: None of these heuristic combinations guarantee admissibility across any map configuration. For options a, d, and e, the inclusion of $\hat{h_2}$ (which scales with NPF) causes overestimations. For instance, if the character is at the sink holding F plates, the true cost to finish is 0 energy points. Any multiplier or addition of $\hat{h_2}$ will result in a value $> 0$, overestimating the cost. Regarding options b and c, the inclusion of $\hat{h_3}$ means that at the exact goal state (true cost = 0), the function will still evaluate to a number greater than 0 (e.g., $\frac{1}{2} = 0.5$), which violates the primary admissibility rule where $h(goal) = 0$.
+
+### Problem 2: 4-piece game
+
+TODO
+
+## Part 2
+
+### Problem 1: Multiple choice questions
+
+TODO
+### Problem 2: Neuron
+
+Consider the following set of examples: S={([1,1,0],1), ([0,1,0],0), ([0,1,1],1), ([1,1,1],0)}.
+
+a) Apply a neuron with the weights w = [0,-1,0] and bias b = 0.5 using the ReLU activation function to the examples in S.
+
+Solution:
+
+The pre-activation value is $z = w \cdot x + b$ and the ReLU activation is $a = \max(0, z)$.
+
+For $x^{(1)} = [1, 1, 0]$: $z_1 = 0(1) - 1(1) + 0(0) + 0.5 = -0.5 \implies a_1 = \max(0, -0.5) = 0$
+
+For $x^{(2)} = [0, 1, 0]$: $z_2 = 0(0) - 1(1) + 0(0) + 0.5 = -0.5 \implies a_2 = \max(0, -0.5) = 0$
+
+For $x^{(3)} = [0, 1, 1]$: $z_3 = 0(0) - 1(1) + 0(1) + 0.5 = -0.5 \implies a_3 = \max(0, -0.5) = 0$
+
+For $x^{(4)} = [1, 1, 1]$: $z_4 = 0(1) - 1(1) + 0(1) + 0.5 = -0.5 \implies a_4 = \max(0, -0.5) = 0$
+
+
+b) What is the problem that occurs when optimizing this neuron? Propose a new value for b so that you solve the identified problem. Prove that the new value actually solves the problem.
+
+Solution:
+
+The neuron suffers from the "dying ReLU" problem on this dataset. Because the pre-activation $z$ is negative for all inputs in $S$, the output is consistently $0$, and the derivative of the ReLU function is exactly $0$. Consequently, no gradients will flow backwards through this neuron during backpropagation, and the weights cannot be updated.
+
+We must ensure $z > 0$ for at least some examples to yield a non-zero gradient. Since $w \cdot x = -1$ for all examples in $S$, we need $b > 1$. Let's choose $b = 2$.
+
+Using the new bias $b = 2$:
+$z_i = w \cdot x^{(i)} + b = -1 + 2 = 1 \text{ for all } i \in \{1, 2, 3, 4\}$
+The activation becomes $a_i = \max(0, 1) = 1$. 
+Because $z_i > 0$, the local derivative of the ReLU activation is $1$ (not $0$). This allows the gradient to pass through the neuron during backpropagation, successfully resolving the dying ReLU problem.
+
+c) Is there any neuron with the maxout activation function that can correctly predict (with an error of 0) the labels of the examples in S?
+
+Solution:
+
+Yes. A maxout unit computes the maximum of $k$ affine functions: $f(x) = \max_{j=1}^k (w^{(j)} \cdot x + b_j)$ (so basically a generalization of ReLU). 
+Notice that $x_2 = 1$ for all inputs in $S$, rendering it a constant. The mapping of the remaining features $(x_1, x_3)$ to the labels forms an XOR problem. A maxout neuron with $k=2$ linear functions can perfectly represent this mapping.
+
+Let the parameters for the two linear functions be:
+$w^{(1)} = [1, 0, -1]$ and $b_1 = 0$,
+$w^{(2)} = [-1, 0, 1]$ and $b_2 = 0$.
+
+Applying $f(x) = \max(w^{(1)} \cdot x + b_1, w^{(2)} \cdot x + b_2)$ to $S$:
+
+* For $x^{(1)} = [1, 1, 0]$: $f(x^{(1)}) = \max(1(1) + 0(1) - 1(0), -1(1) + 0(1) + 1(0)) = \max(1, -1) = 1$ (Matches label $1$)
+* For $x^{(2)} = [0, 1, 0]$: $f(x^{(2)}) = \max(0, 0) = 0$ (Matches label $0$)
+* For $x^{(3)} = [0, 1, 1]$: $f(x^{(3)}) = \max(1(0) + 0(1) - 1(1), -1(0) + 0(1) + 1(1)) = \max(-1, 1) = 1$ (Matches label $1$)
+* For $x^{(4)} = [1, 1, 1]$: $f(x^{(4)}) = \max(1(1) + 0(1) - 1(1), -1(1) + 0(1) + 1(1)) = \max(0, 0) = 0$ (Matches label $0$)
+
+This maxout neuron yields exactly the correct labels, thus achieving an error of $0$.
+
+### Problem 3: Normalization
+
+Consider a non-empty set of examples S from $\mathbb{R}^3$.
+
+a) What is the geometric object on which the points from S lie after normalizing them using the L2 norm?
+
+Solution:
+
+After L2 normalization, each point $x \in S$ is transformed to a new vector $x' = \frac{x}{\|x\|_2}$. Consequently, the L2 norm of every resulting point becomes exactly $1$ (i.e., $\|x'\|_2 = 1$). In $\mathbb{R}^3$, the set of all points with a Euclidean distance of $1$ from the origin forms the surface of a unit sphere centered at the origin.
+
+b) Is there a neuron that can separate the normalized points $x \in \mathbb{R}^3$ with $x>0$ from all the other?
+
+Solution:
+
+The question is ambiguous. We have 2 main ways of interpreting this (so make sure to ask your teacher what the real interpretation should be):
+
+If we consider that all the points are normalized, then we need to separate the points that have x>0 from those that have x<=0. This can be achieved with a simple linear neuron defined by the weights $w = [1, 0, 0]$ and bias $b = 0$. The decision boundary is the plane defined by $w \cdot x + b = 0$, which simplifies to $x_1 = 0$. This neuron will output a positive value for points where $x_1 > 0$ and a non-positive value for points where $x_1 \leq 0$, effectively separating the two groups of points.
+
+If we consider that not all the points are normalized, then we can't create such a neuron. The normalized points lie on the positive surface of the unit sphere. Because the sphere is curved, no single linear decision boundary (2d plane) can separate the points. The intuitive explaination is that the normalized points are kind of surrounded by the non-normalized points, so we can't find a plane that separates them. In this case, we would need a more complex model (e.g., a multi-layer neural network) to achieve separation.
