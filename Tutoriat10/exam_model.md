@@ -55,8 +55,6 @@ The map looks like this:
 ```
 A state is represented as a tuple of the form (RP, CP, NPF, list of coordinates of the uncolleceted plates on the map).
 
-A state is represented as a tuple of the form (RP, CP, NPF, list of coordinates of the uncolleceted plates on the map).
-
 #### Questions:
 
 1. For this question, the character starts at position (1,1). We are trying to find the shortest path from the initial state to a final state, where all plates are collected and dropped at the sink. What is the greatest number of children that a state node can have in the search tree?
