@@ -80,7 +80,7 @@ The time complexity is $O(b^m)$, where $b$ is the maximum branching factor (succ
 
 ## A*
 
-This algorithm represents an informed search approach and is considered one of the most efficient pathfinding algorithms. It differs from Greedy Best-First Search by taking into account both the actual accumulated cost from the start node and the estimated cost to the destination.At each step, the algorithm selects the node $n$ that minimizes the total evaluation function for expansion:$f(n) = g(n) + h(n)$where $g(n)$ is the exact cost of the path from start to node $n$, and $h(n)$ is the heuristic (estimated cost from $n$ to the destination). If the heuristic is admissible, A* guarantees finding the minimum cost (optimal) path.
+This algorithm represents an informed search approach and is considered one of the most efficient pathfinding algorithms. It differs from Greedy Best-First Search by taking into account both the actual accumulated cost from the start node and the estimated cost to the destination.At each step, the algorithm selects the node $n$ that minimizes the total evaluation function for expansion: f(n) = g(n) + h(n), where $g(n)$ is the exact cost of the path from start to node $n$, and $h(n)$ is the heuristic (estimated cost from $n$ to the destination). If the heuristic is admissible, A* guarantees finding the minimum cost (optimal) path.
 
 ### Python Implementation
 
